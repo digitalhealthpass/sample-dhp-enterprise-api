@@ -1,0 +1,117 @@
+
+{
+    "log": {
+        "name": "console",
+        "level": "info"
+    },
+    "dataSubmissionAPI": {
+        "hostname": "https://sandbox1.wh-hpass.dev.acme.com/api/v1/datasubmission"
+    },
+    "hpassAPI": {
+        "hostname": "https://sandbox1.wh-hpass.dev.acme.com/api/v1/hpass"
+    },
+    "verifierConfigAPI": {
+        "hostname": "https://sandbox1.wh-hpass.dev.acme.com/api/v1/verifier/config/api/v1"
+    },
+    "meteringAPI": {
+        "hostname": "https://sandbox1.wh-hpass.dev.acme.com/api/v1/metering",
+        "offlineMode": false
+    },
+    "IAMServer": "https://iam.cloud.ibm.com",
+    "upgradeDBOnStartup": true,
+    "postgres": {
+        "connectTimeout": 30000,
+        "requestTimeout": 120000,
+        "connectionPool": {
+            "max": 5,
+            "min": 0,
+            "acquire": 30000,
+            "idle": 10000
+        }
+    },
+    "appID": {
+        "retries": 1,
+        "retryDelay": 3000,
+        "timeout": 10000
+    },
+    "des": {
+        "retries": 3,
+        "retryDelay": 3000,
+        "timeout": 120000
+    },
+    "orgs" :{
+        "name": "des",
+        "cronSchedulerEnabled": true,
+        "jobs" :{
+            "process": {
+                "orgId": "all",
+                "name": "process all orgs data",
+                "schedule": "*/15 * * * *",
+                "option": { "scheduled": true},
+                "staleMins": 14
+            },
+            "tririga": {
+                "orgId": "ibm-rto",
+                "name": "publish data to TRIRIGA",
+                "schedule": "45 2 * * *",
+                "option": { "scheduled": true},
+                "staleMins": 10
+            },
+            "chs": {
+                "orgId": "ibm-rto",
+                "name": "publish data to CHS",
+                "schedule": "0 3 * * *",
+                "option": { "scheduled": true},
+                "staleMins": 20
+            },
+            "sg": {
+                "orgId": "ibm-rto-sg",
+                "name": "publish data to SG",
+                "schedule": "0 16 * * *",
+                "option": { "scheduled": true},
+                "staleMins": 20
+            },
+            "partner": {
+                "orgId": "all",
+                "name": "process partner data",
+                "schedule":  "0 * * * *",
+                "option": { "scheduled": true},
+                "staleMins": 20
+            },
+            "publish": {
+                "orgId": "all",
+                "name": "publish data",
+                "schedule":  "50 23 * * *",
+                "option": { "scheduled": true, "timezone": "America/New_York"},
+                "staleMins": 20
+            },
+            "cleanup": {
+                "orgId": "all",
+                "name": "clean data",
+                "schedule":  "55 23 * * *",
+                "option": { "scheduled": true, "timezone": "America/New_York"},
+                "staleMins": 20
+            }
+        }
+    },
+    "cos": {
+        "maxKeys": 100,
+        "bucketExpirationDays": 30,
+        "locationConstraint": "us-south-standard",
+        "endpoint": "s3.us-south.cloud-object-storage.appdomain.cloud",
+        "authEndpoint": "https://iam.cloud.ibm.com/oidc/token",
+        "connectTimeout": 5000,
+        "timeout": 10000,
+        "maxRetries": 3
+    },
+    "cleared4": {
+        "endpoint": "https://dev-api.cleared4.org/v1",
+        "retries": 3,
+        "retryDelay": 3000,
+        "timeout": 120000
+    },
+    "asyncPool": {
+        "workers": 10
+    },
+    "failureThresholdPercent": 0.20
+}

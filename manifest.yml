@@ -1,0 +1,8 @@
+---
+applications:
+- disk_quota: 512M
+  name: sample-dhp-enterprise-api
+  command: "npm start"
+  path: "."
+  instances: 1
+  memory: 512M

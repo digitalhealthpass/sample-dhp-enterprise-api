@@ -1,0 +1,1301 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "DHP Enterprise Service API",
+    "description": "Swagger definition for Digital Health Pass Enterprise Service API",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "users",
+      "description": "Manage users"
+    },
+    {
+      "name": "organizations",
+      "description": "Manage organizations"
+    },
+    {
+      "name": "jobs",
+      "description": "Manage jobs"
+    },
+    {
+      "name": "credentials",
+      "description": "Manage credentials"
+    },
+    {
+      "name": "data",
+      "description": "Manage enterprise data"
+    },
+    {
+      "name": "box",
+      "description": "Manage Box"
+    }
+  ],
+  "servers": [
+    {
+      "url": "/api/v1/enterprise",
+      "description": "VPC"
+    },
+    {
+      "url": "/",
+      "description": "Sandbox"
+    }
+  ],
+  "paths": {
+    "/users/login": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "User login",
+        "description": "Login as a registered user",
+        "operationId": "userLogin",
+        "requestBody": {
+          "description": "Login credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful user login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed login due to invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organization/register": {
+      "post": {
+        "tags": [
+          "organizations"
+        ],
+        "summary": "Register organization",
+        "description": "Register an organization for enterprise services",
+        "operationId": "registerOrganization",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details of organization to be registered including its ID and configuration",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Organization"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully registered organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed registering organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicErrorMessage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/organization": {
+      "put": {
+        "tags": [
+          "organizations"
+        ],
+        "summary": "Update organization",
+        "description": "Update an organization already registered for enterprise services",
+        "operationId": "updateOrganization",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details of organization to be updated including its ID and configuration changes",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Organization"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed updating organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicErrorMessage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/organization/{orgId}": {
+      "get": {
+        "tags": [
+          "organizations"
+        ],
+        "summary": "Get organization",
+        "description": "Get details of specified organization",
+        "operationId": "getOrganization",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "organizations"
+        ],
+        "summary": "Delete organization",
+        "description": "Delete specified organization",
+        "operationId": "deleteOrganization",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/job": {
+      "post": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Create job",
+        "description": "Create an enterprise services job for an organization",
+        "operationId": "createJob",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details of job to be created including organization and job IDs as well as status",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Job"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed creating job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicErrorMessage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Update job",
+        "description": "Update an enterprise services job already created for an organization",
+        "operationId": "updateJob",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details of job to be updated including organization and job IDs as well as status change",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Job"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed updating job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicErrorMessage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/job/{orgId}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Get jobs",
+        "description": "Get details of all enterprise services jobs for specified organization",
+        "operationId": "getOrganizationJobs",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved jobs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "payload": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/JobResponse"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/job/{orgId}/{jobId}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Get job",
+        "description": "Get details of enterprise service job for specified organization",
+        "operationId": "getOrganizationJob",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          },
+          {
+            "in": "path",
+            "name": "jobId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Job ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Delete job",
+        "description": "Delete enterprise service job for specified organization",
+        "operationId": "deleteOrganizationJob",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          },
+          {
+            "in": "path",
+            "name": "jobId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Job ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/credentials/verify": {
+      "post": {
+        "tags": [
+          "credentials"
+        ],
+        "summary": "Verify credentials",
+        "description": "Verify credentials for holder by email",
+        "operationId": "verifyCredentials",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details of credentials to verify including organization ID and holder email",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialHolder"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully verified credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/data/{orgId}/persist": {
+      "post": {
+        "tags": [
+          "data"
+        ],
+        "summary": "Persist data",
+        "description": "Process and persist enterprise data for specified organization",
+        "operationId": "persistOrganizationData",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully persisted data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/data/{orgId}/report/{clientId}/{folderId}": {
+      "post": {
+        "tags": [
+          "data"
+        ],
+        "summary": "Publish report",
+        "description": "Publish report of enterprise data for specified organization",
+        "operationId": "publishOrganizationReport",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          },
+          {
+            "in": "path",
+            "name": "clientId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Client ID"
+          },
+          {
+            "in": "path",
+            "name": "folderId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Box folder ID"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully published report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/data/{orgId}/report/{clientId}": {
+      "get": {
+        "tags": [
+          "data"
+        ],
+        "summary": "Get report",
+        "description": "Get report of enterprise data for specified organization",
+        "operationId": "getOrganizationReport",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Organization ID"
+          },
+          {
+            "in": "path",
+            "name": "clientId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Client ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "payload": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "Data format based on client filters"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/box/folders/{folderId}": {
+      "get": {
+        "tags": [
+          "box"
+        ],
+        "summary": "Get Box folder",
+        "description": "Get contents (files and folders) of specified Box folder",
+        "operationId": "getContentsOfBoxFolder",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folderId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Box folder ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved folder contents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFolderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/box/folders/{folderId}/files": {
+      "post": {
+        "tags": [
+          "box"
+        ],
+        "summary": "Upload file to Box",
+        "description": "Upload file to specified Box folder",
+        "operationId": "uploadFileToBoxFolder",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "folderId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Box folder ID"
+          }
+        ],
+        "requestBody": {
+          "description": "Details of file to be uploaded including source type, source and destination Box folder ID (if source type is 'filePath' then source is path to local file, if source type is 'fileContents' then source is actual contents of file)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadFileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully uploaded file",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadFileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed uploading file",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicErrorMessage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/box/files/{fileId}": {
+      "delete": {
+        "tags": [
+          "box"
+        ],
+        "summary": "Delete Box file",
+        "description": "Delete specified Box file",
+        "operationId": "deleteBoxFile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fileId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Box file ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted file",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGetRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserLoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserLoginResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "id_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "integer"
+          },
+          "scope": {
+            "type": "string"
+          }
+        }
+      },
+      "Organization": {
+        "type": "object",
+        "required": [
+          "orgId",
+          "config"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string",
+            "description": "Organization ID"
+          },
+          "config": {
+            "type": "object",
+            "description": "Organization configuration properties"
+          }
+        }
+      },
+      "OrganizationResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "payload": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Organization"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "updatedAt": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "required": [
+          "orgId",
+          "jobId",
+          "status"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string",
+            "description": "Organization ID"
+          },
+          "jobId": {
+            "type": "string",
+            "description": "Job ID"
+          },
+          "status": {
+            "type": "string",
+            "description": "Job status"
+          }
+        }
+      },
+      "JobResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "payload": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Job"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "updatedAt": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "CredentialHolder": {
+        "type": "object",
+        "required": [
+          "orgId",
+          "email"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string",
+            "description": "Organization ID"
+          },
+          "email": {
+            "type": "string",
+            "description": "Holder email"
+          }
+        }
+      },
+      "UploadFileRequest": {
+        "type": "object",
+        "required": [
+          "srcType",
+          "source",
+          "dstFile"
+        ],
+        "properties": {
+          "srcType" : {
+            "type": "string",
+            "description": "Source type (filePath or fileContents)",
+            "enum": [
+              "filePath",
+              "fileContents"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "description": "Source file path (type=filePath) or file contents (type=fileContents)"
+          },
+          "dstFile": {
+            "type": "string",
+            "description": "Destination file name"
+          }
+        }
+      },
+      "UploadFileResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "size": {
+                "type": "string"
+              },
+              "sha1": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetFolderResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BasicErrorMessage": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BasicMessage": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "InvalidRequestError": {
+        "description": "Missing or invalid required fields in request body",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BasicErrorMessage"
+            }
+          }
+        }
+      },
+      "InvalidGetRequestError": {
+        "description": "Invalid fields in request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BasicErrorMessage"
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Logged in user is unauthorized to make this request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BasicErrorMessage"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BasicErrorMessage"
+            }
+          }
+        }
+      },
+      "ConflictError": {
+        "description": "Resource already exists",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BasicErrorMessage"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Unexpected server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BasicErrorMessage"
+            }
+          }
+        }
+      }
+    }
+  }
+}
